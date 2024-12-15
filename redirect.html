@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
+  <script>
+    // Extract WalletConnect URI from the query string and redirect
+    const params = new URLSearchParams(window.location.search);
+    const uri = params.get('uri');
+    const wallet = params.get('wallet'); // Optional wallet type
+
+    if (uri) {
+      const deepLink = wallet ? `${wallet}://${uri}` : uri;
+      window.location.href = deepLink;
+    } else {
+      document.body.innerText = 'Invalid WalletConnect URI';
+    }
+  </script>
+</head>
+<body>
+  <p>Redirecting to your wallet...</p>
+</body>
+</html>
