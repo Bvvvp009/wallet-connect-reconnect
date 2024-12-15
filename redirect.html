@@ -2,116 +2,98 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Wallet Connection Redirect</title>
+    <title>WalletConnect Redirect</title>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Get URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const wallet = urlParams.get('wallet');
             const uri = urlParams.get('uri');
 
             if (!wallet || !uri) {
-                alert('Invalid redirect parameters');
+                alert('Invalid connection parameters');
                 return;
             }
 
-            // Improved wallet redirection logic
+            // Comprehensive wallet redirection logic
             const walletRedirects = {
                 'metamask': () => {
-                    // Multiple fallback methods for MetaMask
-                    const redirectAttempts = [
-                        () => window.location.href = `metamask://dapp?url=${encodeURIComponent(uri)}`,
-                        () => window.location.href = `https://metamask.app.link/dapp/${encodeURIComponent(uri)}`,
+                    const attempts = [
+                        () => window.location.href = `metamask://wc?uri=${encodeURIComponent(uri)}`,
+                        () => window.location.href = `https://metamask.app.link/wc?uri=${encodeURIComponent(uri)}`,
                         () => window.location.href = uri
                     ];
-                    attemptRedirects(redirectAttempts);
+                    attemptRedirects(attempts);
                 },
                 'trust': () => {
-                    // Trust Wallet redirect attempts
-                    const redirectAttempts = [
-                        () => window.location.href = `trust://open?url=${encodeURIComponent(uri)}`,
-                        () => window.location.href = `https://link.trustwallet.com/open_url?url=${encodeURIComponent(uri)}`,
+                    const attempts = [
+                        () => window.location.href = `trust://wc?uri=${encodeURIComponent(uri)}`,
+                        () => window.location.href = `https://link.trustwallet.com/wc?uri=${encodeURIComponent(uri)}`,
                         () => window.location.href = uri
                     ];
-                    attemptRedirects(redirectAttempts);
+                    attemptRedirects(attempts);
                 },
                 'safepal': () => {
-                    // SafePal redirect attempts
-                    const redirectAttempts = [
-                        () => window.location.href = `safepal://dapp?url=${encodeURIComponent(uri)}`,
-                        () => window.location.href = `https://www.safepal.com/dapp?url=${encodeURIComponent(uri)}`,
+                    const attempts = [
+                        () => window.location.href = `safepal://wc?uri=${encodeURIComponent(uri)}`,
                         () => window.location.href = uri
                     ];
-                    attemptRedirects(redirectAttempts);
+                    attemptRedirects(attempts);
                 },
                 'okx': () => {
-                    // OKX Wallet redirect attempts
-                    const redirectAttempts = [
-                        () => window.location.href = `okex://dapp?url=${encodeURIComponent(uri)}`,
-                        () => window.location.href = `https://www.okx.com/mobile-wallet/dapp?url=${encodeURIComponent(uri)}`,
+                    const attempts = [
+                        () => window.location.href = `okex://wc?uri=${encodeURIComponent(uri)}`,
                         () => window.location.href = uri
                     ];
-                    attemptRedirects(redirectAttempts);
+                    attemptRedirects(attempts);
                 },
                 'zerion': () => {
-                    // Zerion redirect attempts
-                    const redirectAttempts = [
-                        () => window.location.href = `zerion://dapp?url=${encodeURIComponent(uri)}`,
-                        () => window.location.href = `https://zerion.io/dapp?url=${encodeURIComponent(uri)}`,
+                    const attempts = [
+                        () => window.location.href = `zerion://wc?uri=${encodeURIComponent(uri)}`,
                         () => window.location.href = uri
                     ];
-                    attemptRedirects(redirectAttempts);
+                    attemptRedirects(attempts);
                 },
                 'tp': () => {
-                    // TokenPocket redirect attempts
-                    const redirectAttempts = [
-                        () => window.location.href = `tp://dapp?url=${encodeURIComponent(uri)}`,
-                        () => window.location.href = `https://www.tokenpocket.pro/dapp?url=${encodeURIComponent(uri)}`,
+                    const attempts = [
+                        () => window.location.href = `tp://wc?uri=${encodeURIComponent(uri)}`,
                         () => window.location.href = uri
                     ];
-                    attemptRedirects(redirectAttempts);
+                    attemptRedirects(attempts);
                 }
             };
 
-            // Attempt redirects with fallback mechanism
             function attemptRedirects(redirectAttempts, index = 0) {
                 if (index >= redirectAttempts.length) {
                     console.error('All redirect attempts failed');
+                    document.getElementById('status').textContent = 'Redirect failed. Please open wallet manually.';
                     return;
                 }
 
                 try {
-                    // Attempt current redirect
                     redirectAttempts[index]();
-
-                    // Create a timeout to try next method if this fails
+                    
                     setTimeout(() => {
                         attemptRedirects(redirectAttempts, index + 1);
                     }, 1000);
                 } catch (error) {
                     console.error(`Redirect attempt ${index} failed:`, error);
-                    // Try next redirect method
                     attemptRedirects(redirectAttempts, index + 1);
                 }
             }
 
-            // Perform wallet-specific redirect
+            // Perform redirect
             const redirectFunction = walletRedirects[wallet];
             if (redirectFunction) {
                 redirectFunction();
             } else {
-                // Fallback to direct URI if wallet not recognized
                 window.location.href = uri;
             }
-
-            // Provide visual feedback
-            document.getElementById('status').textContent = `Redirecting to ${wallet} wallet...`;
         });
     </script>
 </head>
 <body>
-    <h1>Wallet Connection Redirect</h1>
-    <p id="status">Preparing to redirect...</p>
-    <p>If you are not redirected, please click the link manually.</p>
+    <h1>WalletConnect Redirect</h1>
+    <p id="status">Redirecting to wallet...</p>
+    <p>If not redirected, please open wallet manually.</p>
 </body>
 </html>
